@@ -1,0 +1,43 @@
+```
+int main()
+{
+    printf("hello world");
+}
+```
+
+```
+print("hi")
+print(1 + 1)
+```
+
+```
+// lexer.c
+
+enum Token_Types
+{
+INT_TOK,
+OPEN_PAREN,
+CLOSE_PAREN,
+OPEN_BRACKET,
+IDENTIFIER,
+STRING_LIT,
+SEMI_COLON,
+CLOSE_BRACKET
+}
+
+
+```
+
+// LEXER:
+INT_TOK,
+IDENTIFIER,
+OPEN_PAREN,
+CLOSE_PAREN,
+OPEN_BRACKET,
+IDENTIFIER,
+OPEN_PAREN,
+STRING_LIT,
+CLOSE_PAREN,
+SEMI_COLON,
+CLOSE_BRACKET
+

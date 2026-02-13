@@ -1,0 +1,2 @@
+-IGLFW\include
+-Iglad\include

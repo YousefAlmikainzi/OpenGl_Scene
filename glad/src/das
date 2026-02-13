@@ -1,0 +1,8 @@
+gl.h
+glaux.h
+glcorearb.h
+glext.h
+glu.h
+glxext.h
+wgl.h
+wglext.h
