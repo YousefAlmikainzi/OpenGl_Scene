@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#define RESOLUTION 1000
+
 float obj_Vertices[] =
 {
     0.5f, 0.5f, 0.0f,
@@ -27,6 +29,56 @@ mat4 M_MulMatrix(mat4 a, mat4 b);
 
 int main()
 {
+    FILE *vertexHLSL = fopen("VertexShader.vs", "r");
+    FILE *fragmentHLSL = fopen("FragmentShader.fs", "r");
+    char *vertexString = malloc(sizeof(char) * 2000);
+    char *fragmentString = malloc(sizeof(char) * 2000);
+
+    readEntireFile(vertexString, vertexHLSL);
+    const char* vertexSource = vertexString;
+    fclose(vertexHLSL);
+
+    readEntireFile(fragmentString, fragmentHLSL);
+    const char* fragmentSource = fragmentString;
+    fclose(fragmentHLSL);
+
+    glfwInit();
+    GLFWwindow *window = glfwCreateWindow(RESOLUTION, RESOLUTION, "OpenGlScene", NULL, NULL);
+    glfwMakeContextCurrent(window);
+    gladLoadGLLoader((void*)glfwGetProcAddress);
+    glfwSetFramebufferSizeCallback(window, framebuffer);
+
+    //vertex shader
+    unsigned int vertexShaderID = 0;
+    vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShaderID, 1, &vertexSource, NULL);
+    glCompileShader(vertexShaderID);
+
+    //fragment shader
+    unsigned int fragmentShaderID = 0;
+    fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShaderID, 1, &fragmentSource, NULL);
+    glCompileShader(fragmentShaderID);
+
+    unsigned int shaderProgram = 0;
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShaderID);
+    glAttachShader(shaderProgram, fragmentShaderID);
+    glLinkProgram(shaderProgram);
+
+    free(vertexString);
+    free(fragmentString);
+    glDeleteShader(vertexShaderID);
+    glDeleteShader(fragmentShaderID);
+
+    unsigned int VAO, VBO;
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBO);
+
+
     return 0;
 }
 
