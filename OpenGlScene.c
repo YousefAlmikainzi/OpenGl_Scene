@@ -154,7 +154,7 @@ mat4 M_Translate(float x, float y, float z)
 
 mat4 M_Scale(float sx, float sy, float sz)
 {
-    mat4 S = {0};
+    mat4 S = M_Identity();
 
     S.m[0] = sx;
     S.m[5] = sy;
