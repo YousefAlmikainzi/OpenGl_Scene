@@ -8,10 +8,47 @@
 
 float obj_Vertices[] =
 {
-    0.5f, 0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    -0.5f, 0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f
+    -0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f, -0.5f,
+    0.5f,  0.5f, -0.5f,
+    0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+    0.5f, -0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+    0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f, -0.5f,
+    0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f, -0.5f,
+    0.5f, -0.5f,  0.5f,
+    0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+    0.5f,  0.5f, -0.5f,
+    0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
 };
 
 typedef struct
@@ -27,6 +64,7 @@ mat4 M_Translate(float x, float y, float z);
 mat4 M_Scale(float sx, float sy, float sz);
 mat4 M_MulMatrix(mat4 a, mat4 b);
 mat4 M_Rotate_Z(float angle);
+mat4 M_Rotate_X(float angle);
 
 int main()
 {
@@ -47,6 +85,7 @@ int main()
     GLFWwindow *window = glfwCreateWindow(RESOLUTION, RESOLUTION, "OpenGlScene", NULL, NULL);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((void*)glfwGetProcAddress);
+    glEnable(GL_DEPTH_TEST);
     glfwSetFramebufferSizeCallback(window, framebuffer);
 
     //vertex shader
@@ -95,19 +134,28 @@ int main()
     while(!glfwWindowShouldClose(window))
     {
         glClearColor(0.3f, 0.1f, 0.9f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
         float angleTime = glfwGetTime();
 
         mat4 model = M_Translate(0.25f, 0.6f, 0.0f);
         model = M_MulMatrix(model, M_Rotate_Z(angleTime * 2.0f));
+        model = M_MulMatrix(model, M_Rotate_X(angleTime * 2.0f));
         model = M_MulMatrix(model, M_Scale(0.5f, 0.6f, 1.0f));
+
+        mat4 view = M_Translate(0.0f, 0.0f, -3.0f);
+
+        mat4 projection = M_Identity();
+
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view.m[0]);
+
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection.m[0]);
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model.m[0]);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -172,6 +220,20 @@ mat4 M_Rotate_Z(float angle)
     R.m[1] = s;
     R.m[4] = -s;
     R.m[5] = c;
+
+    return R;
+}
+
+mat4 M_Rotate_X(float angle)
+{
+    mat4 R = M_Identity();
+    float c = cos(angle);
+    float s = sin(angle);
+
+    R.m[5] = c;
+    R.m[6] = s;
+    R.m[9] = -s;
+    R.m[10] = c;
 
     return R;
 }
