@@ -257,3 +257,13 @@ mat4 M_MulMatrix(mat4 a, mat4 b)
     }
     return result;
 }
+
+mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ)
+{
+    float f = 1.0f / tanf(fovyRadians * 0.5);
+    mat4 P = {0};
+
+
+
+    return P;
+}
