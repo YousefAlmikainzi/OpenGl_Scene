@@ -51,6 +51,50 @@ float obj_Vertices[] =
     -0.5f,  0.5f, -0.5f,
 };
 
+float normals[] = {
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,
+
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+
+    -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,
+
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+
+    0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f
+};
+
 typedef struct
 {
     float m[16];
@@ -65,6 +109,7 @@ mat4 M_Scale(float sx, float sy, float sz);
 mat4 M_MulMatrix(mat4 a, mat4 b);
 mat4 M_Rotate_Z(float angle);
 mat4 M_Rotate_X(float angle);
+mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ);
 
 int main()
 {
@@ -111,7 +156,7 @@ int main()
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
 
-    unsigned int VAO, VBO;
+    unsigned int VAO, VBO, NRS;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -124,6 +169,16 @@ int main()
     glEnableVertexAttribArray(0);
 
     //unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    //bind normals
+    glGenBuffers(1, &NRS);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, NRS);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -146,7 +201,9 @@ int main()
 
         mat4 view = M_Translate(0.0f, 0.0f, -3.0f);
 
-        mat4 projection = M_Identity();
+        float fov = 45.0f * (3.14159265f / 180.0f);
+        float aspect = (float)RESOLUTION/RESOLUTION;
+        mat4 projection = M_Perspective(fov, aspect, 0.1f, 100.0f);
 
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view.m[0]);
 
@@ -260,10 +317,14 @@ mat4 M_MulMatrix(mat4 a, mat4 b)
 
 mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ)
 {
-    float f = 1.0f / tanf(fovyRadians * 0.5);
+    float f = 1.0f / tanf(fovyRadians * 0.5f);
     mat4 P = {0};
 
-
+    P.m[0]  = f / aspect;
+    P.m[5]  = f;
+    P.m[10] = (farZ + nearZ) / (nearZ - farZ);
+    P.m[11] = -1.0f;
+    P.m[14] = (2.0f * farZ * nearZ) / (nearZ - farZ);
 
     return P;
 }
