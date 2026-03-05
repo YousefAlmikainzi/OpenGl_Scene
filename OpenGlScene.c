@@ -4,7 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define RESOLUTION 1000
+#define RESOLUTION_Y 1200
+#define RESOLUTION_X 1800
 
 float obj_Vertices[] =
 {
@@ -127,7 +128,7 @@ int main()
     fclose(fragmentHLSL);
 
     glfwInit();
-    GLFWwindow *window = glfwCreateWindow(RESOLUTION, RESOLUTION, "OpenGlScene", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(RESOLUTION_X, RESOLUTION_Y, "OpenGlScene", NULL, NULL);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((void*)glfwGetProcAddress);
     glEnable(GL_DEPTH_TEST);
@@ -202,7 +203,7 @@ int main()
         mat4 view = M_Translate(0.0f, 0.0f, -3.0f);
 
         float fov = 45.0f * (3.14159265f / 180.0f);
-        float aspect = (float)RESOLUTION/RESOLUTION;
+        float aspect = (float)RESOLUTION_X/RESOLUTION_Y;
         mat4 projection = M_Perspective(fov, aspect, 0.1f, 100.0f);
 
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view.m[0]);
