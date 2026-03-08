@@ -187,6 +187,8 @@ int main()
     int viewLoc = glGetUniformLocation(shaderProgram, "view");
     int projLoc = glGetUniformLocation(shaderProgram, "projection");
 
+    int colorLoc = glGetUniformLocation(shaderProgram, "uColor");
+
     while(!glfwWindowShouldClose(window))
     {
         glClearColor(0.3f, 0.1f, 0.9f, 1.0f);
@@ -195,12 +197,12 @@ int main()
         glUseProgram(shaderProgram);
         float angleTime = glfwGetTime();
 
-        mat4 model = M_Translate(0.25f, 0.6f, 0.0f);
-        model = M_MulMatrix(model, M_Rotate_Z(angleTime * 2.0f));
-        model = M_MulMatrix(model, M_Rotate_X(angleTime * 2.0f));
-        model = M_MulMatrix(model, M_Scale(0.5f, 0.6f, 1.0f));
+        mat4 cube = M_Translate(0.25f, 0.6f, 0.0f);
+        cube = M_MulMatrix(cube, M_Rotate_Z(angleTime * 2.0f));
+        cube = M_MulMatrix(cube, M_Rotate_X(angleTime * 2.0f));
+        cube = M_MulMatrix(cube, M_Scale(0.5f, 0.6f, 1.0f));
 
-        mat4 view = M_Translate(0.0f, 0.0f, -3.0f);
+        mat4 view = M_Translate(0.0f, 0.0f, -5.0f);
 
         float fov = 45.0f * (3.14159265f / 180.0f);
         float aspect = (float)RESOLUTION_X/RESOLUTION_Y;
@@ -210,9 +212,28 @@ int main()
 
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection.m[0]);
 
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model.m[0]);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube.m[0]);
 
         glBindVertexArray(VAO);
+
+        glUniform3f(colorLoc, 1.0f, 0.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //second cube
+        mat4 cube2 = M_Translate(2.25f, 1.5f, -5.0f);
+        cube2 = M_MulMatrix(cube2, M_Rotate_Z(angleTime * -2.0f));
+        cube2 = M_MulMatrix(cube2, M_Rotate_X(angleTime * 2.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube2.m[0]);
+        glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //third cube
+        mat4 cube3 = M_Translate(0.25f, 1.5f, 0.0f);
+        cube3 = M_MulMatrix(cube3, M_Rotate_Z(angleTime * -2.0f));
+        cube3 = M_MulMatrix(cube3, M_Rotate_X(angleTime * -2.0f));
+        cube3 = M_MulMatrix(cube3, M_Scale(0.25f, 0.25f, 0.25f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube3.m[0]);
+        glUniform3f(colorLoc, 0.0f, 0.0f, 1.0f);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);

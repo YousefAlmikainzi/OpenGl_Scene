@@ -2,6 +2,8 @@
 
 in vec3 o_normal;
 
+uniform vec3 uColor;
+
 out vec4 finalColor;
 
 float saturation(float v)
@@ -19,7 +21,7 @@ void main()
     vec3 dir = normalize(vec3(0.5, 0.5, 0));
     float diffFactor = dot(o_normal, dir);
     float st = saturation(diffFactor);
-    vec3 color = vec3(0.9, 0.6, 0.3);
+    vec3 color = uColor;
     vec3 ambient = color * 0.25;
     vec3 diffuseColor = color * st;
     vec3 result = ambient + diffuseColor;
