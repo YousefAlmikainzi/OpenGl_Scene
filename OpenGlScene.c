@@ -317,6 +317,20 @@ mat4 M_Rotate_X(float angle)
     return R;
 }
 
+mat4 M_Rotate_Y(float angle)
+{
+    mat4 R = M_Identity();
+    float c = cos(angle);
+    float s = sin(angle);
+
+    R.m[0] = c;
+    R.m[2] = -s;
+    R.m[8] = s;
+    R.m[10] = c;
+
+    return R;
+}
+
 mat4 M_MulMatrix(mat4 a, mat4 b)
 {
     mat4 result = {0};
