@@ -98,6 +98,11 @@ float normals[] = {
 
 typedef struct
 {
+    float x, y, z;
+} Vec3;
+
+typedef struct
+{
     float m[16];
 } mat4;
 
@@ -363,4 +368,15 @@ mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ)
     P.m[14] = (2.0f * farZ * nearZ) / (nearZ - farZ);
 
     return P;
+}
+
+Vec3 get_crossProduct(Vec3 A, Vec3 B)
+{
+    Vec3 r;
+
+    r.x = (A.y * B.z) - (A.z * B.y);
+    r.y = (A.z * B.x) - (A.x * B.z);
+    r.z = (A.x * B.y) - (A.y * B.x);
+
+    return r;
 }
