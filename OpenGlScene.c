@@ -4,8 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define RESOLUTION_Y 1200
-#define RESOLUTION_X 1800
+#define RESOLUTION_Y 800
+#define RESOLUTION_X 1000
 
 float obj_Vertices[] =
 {
@@ -115,6 +115,7 @@ mat4 M_Scale(float sx, float sy, float sz);
 mat4 M_MulMatrix(mat4 a, mat4 b);
 mat4 M_Rotate_Z(float angle);
 mat4 M_Rotate_X(float angle);
+mat4 M_Rotate_Y(float angle);
 mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ);
 
 int main()
@@ -208,6 +209,7 @@ int main()
         cube = M_MulMatrix(cube, M_Scale(0.5f, 0.6f, 1.0f));
 
         mat4 view = M_Translate(0.0f, 0.0f, -5.0f);
+        view = M_MulMatrix(view, M_Rotate_Y(45.0f));
 
         float fov = 45.0f * (3.14159265f / 180.0f);
         float aspect = (float)RESOLUTION_X/RESOLUTION_Y;
