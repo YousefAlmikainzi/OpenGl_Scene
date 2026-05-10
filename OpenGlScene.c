@@ -408,8 +408,8 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     c.m[10] = forward.z;
 
     //right
-    Vec3 worldUp = {0, 1, 0};
-    Vec3 right = get_crossProduct(forward, worldUp);
+    Vec3 defualtUp = {0, 1, 0};
+    Vec3 right = get_crossProduct(forward, defualtUp);
     float rightRoot = sqrt(right.x * right.x + right.y * right.y + right.z * right.z);
 
     right.x = right.x / rightRoot;
