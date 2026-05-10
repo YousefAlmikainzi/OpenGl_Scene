@@ -117,6 +117,7 @@ mat4 M_Rotate_Z(float angle);
 mat4 M_Rotate_X(float angle);
 mat4 M_Rotate_Y(float angle);
 mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ);
+mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp);
 
 int main()
 {
@@ -195,6 +196,11 @@ int main()
 
     int colorLoc = glGetUniformLocation(shaderProgram, "uColor");
 
+
+    Vec3 cameraPos = {-9.0f, -2.0f, 9.0f};
+    Vec3 cameraTarget = {0.1f, 0.1f, 0.1f};
+    Vec3 worldUp = {0.0f, 1.0f, 0.0f};
+
     while(!glfwWindowShouldClose(window))
     {
         glClearColor(0.3f, 0.1f, 0.9f, 1.0f);
@@ -208,7 +214,7 @@ int main()
         cube = M_MulMatrix(cube, M_Rotate_X(angleTime * 2.0f));
         cube = M_MulMatrix(cube, M_Scale(0.5f, 0.6f, 1.0f));
 
-        mat4 view = M_Translate(0.0f, 0.0f, -5.0f);
+        mat4 view = M_LookAt(cameraPos, cameraTarget, worldUp);
         view = M_MulMatrix(view, M_Rotate_Y(45.0f));
 
         float fov = 45.0f * (3.14159265f / 180.0f);
@@ -381,4 +387,46 @@ Vec3 get_crossProduct(Vec3 A, Vec3 B)
     r.z = (A.x * B.y) - (A.y * B.x);
 
     return r;
+}
+
+mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
+{
+    mat4 c = M_Identity();
+
+    //forward
+    Vec3 forward;
+    forward.x = position.x - target.x;
+    forward.y = position.y - target.y;
+    forward.z = position.z - target.z;
+    float forwardRoot = sqrt(forward.x * forward.x + forward.y * forward.y + forward.z * forward.z);
+    forward.x = forward.x /forwardRoot;
+    forward.y = forward.y /forwardRoot;
+    forward.z = forward.z /forwardRoot;
+
+    c.m[8] = forward.x;
+    c.m[9] = forward.y;
+    c.m[10] = forward.z;
+
+    //right
+    Vec3 worldUp = {0, 1, 0};
+    Vec3 right = get_crossProduct(forward, worldUp);
+    float rightRoot = sqrt(right.x * right.x + right.y * right.y + right.z * right.z);
+
+    right.x = right.x / rightRoot;
+    right.y = right.y / rightRoot;
+    right.z = right.z / rightRoot;
+
+    c.m[0] = right.x;
+    c.m[1] = right.y;
+    c.m[2] = right.z;
+
+    //up
+    Vec3 up = get_crossProduct(right, forward);
+    float upRoot = sqrt(up.x * up.x + up.y * up.y + up.z * up.z);
+
+    c.m[4] = up.x;
+    c.m[5] = up.y;
+    c.m[6] = up.z;
+
+    return c;
 }
