@@ -197,8 +197,8 @@ int main()
     int colorLoc = glGetUniformLocation(shaderProgram, "uColor");
 
 
-    Vec3 cameraPos = {-9.0f, -2.0f, 9.0f};
-    Vec3 cameraTarget = {0.1f, 0.1f, 0.1f};
+    Vec3 cameraPos = {-3.0f, -2.0f, 5.0f};
+    Vec3 cameraTarget = {-2.1f, 2.1f, -2.1f};
     Vec3 worldUp = {0.0f, 1.0f, 0.0f};
 
     while(!glfwWindowShouldClose(window))
@@ -403,8 +403,8 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     forward.y = forward.y /forwardRoot;
     forward.z = forward.z /forwardRoot;
 
-    c.m[8] = forward.x;
-    c.m[9] = forward.y;
+    c.m[2] = forward.x;
+    c.m[6] = forward.y;
     c.m[10] = forward.z;
 
     //right
@@ -417,16 +417,20 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     right.z = right.z / rightRoot;
 
     c.m[0] = right.x;
-    c.m[1] = right.y;
-    c.m[2] = right.z;
+    c.m[4] = right.y;
+    c.m[8] = right.z;
 
     //up
     Vec3 up = get_crossProduct(right, forward);
     float upRoot = sqrt(up.x * up.x + up.y * up.y + up.z * up.z);
+    up.x = up.x /upRoot;
+    up.y = up.y /upRoot;
+    up.z = up.z /upRoot;
 
-    c.m[4] = up.x;
+    c.m[1] = up.x;
     c.m[5] = up.y;
-    c.m[6] = up.z;
+    c.m[9] = up.z;
 
-    return c;
+    mat4 translation = M_Translate(-position.x, -position.y, -position.z);
+    return M_MulMatrix(c, translation);
 }
