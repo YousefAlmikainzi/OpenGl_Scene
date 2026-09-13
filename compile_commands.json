@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "C:/Users/Youse/C/SceneWithTextures",
+    "file": "C:/Users/Youse/C/SceneWithTextures/Scene.c",
+    "command": "C:/mingw64/bin/gcc.exe Scene.c glad/src/glad.c -Iglad/include -IGLFW/include -LGLFW/lib-mingw-w64 -lglfw3 -lgdi32 -o Scene.exe"
+  }
+]
