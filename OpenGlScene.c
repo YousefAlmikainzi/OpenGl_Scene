@@ -206,7 +206,7 @@ int main()
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
 
-    unsigned int VAO, VBO, NRS;
+    unsigned int VAO, VBO, NRS, EBO, CLR, UV;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -222,6 +222,13 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    //ebo
+    glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindVertexArray(0);
+
     //bind normals
     glGenBuffers(1, &NRS);
     glBindVertexArray(VAO);
@@ -229,6 +236,16 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    //bind uv
+    glGenBuffers(1, &UV);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, UV);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uv), uv, GL_STATIC_DRAW);
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -272,7 +289,7 @@ int main()
         glBindVertexArray(VAO);
 
         glUniform3f(colorLoc, 1.0f, 0.0f, 0.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         //second cube
         mat4 cube2 = M_Translate(2.25f, 1.5f, -5.0f);
@@ -280,7 +297,7 @@ int main()
         cube2 = M_MulMatrix(cube2, M_Rotate_X(angleTime * 2.0f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube2.m[0]);
         glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         //third cube
         mat4 cube3 = M_Translate(0.25f, 1.5f, 0.0f);
@@ -289,7 +306,7 @@ int main()
         cube3 = M_MulMatrix(cube3, M_Scale(0.25f, 0.25f, 0.25f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube3.m[0]);
         glUniform3f(colorLoc, 0.0f, 0.0f, 1.0f);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
