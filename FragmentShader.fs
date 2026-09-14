@@ -16,14 +16,30 @@ vec3 saturation(vec3 v)
     return clamp(v, 0.0, 1.0);
 }
 
+float remap(float x, float a, float b, float c, float d)
+{
+    return mix(c, d, (x - a) / (b - a));
+}
+
 void main()
 {
-    vec3 dir = normalize(vec3(0.5, 0.5, 0));
-    float diffFactor = dot(o_normal, dir);
+    vec3 normals = normalize(o_normal);
+    vec3 dir = normalize(vec3(0.0, 0.5, 1.0));
+    float diffFactor = dot(normals, dir);
     float st = saturation(diffFactor);
+    //color
     vec3 color = uColor;
+    //ambient
     vec3 ambient = color * 0.25;
+    //hemi
+    vec3 skyColor = vec3(0.5, 0.7, 1.0);
+    vec3 groundColor = vec3(0.65, 0.50, 0.38);
+
+    float hemiMix = remap(normals.y, -1, 1, 0, 1);
+    vec3 hemi = mix(groundColor, skyColor, hemiMix);
+    vec3 hemiWColor = hemi * uColor;
+
     vec3 diffuseColor = color * st;
-    vec3 result = ambient + diffuseColor;
+    vec3 result = diffuseColor + hemiWColor;
     finalColor = vec4(result, 1.0);
 }
