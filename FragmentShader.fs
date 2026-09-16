@@ -30,16 +30,16 @@ void main()
     //color
     vec3 color = uColor;
     //ambient
-    vec3 ambient = color * 0.25;
+    //vec3 ambient = color * 0.25;
     //hemi
-    vec3 skyColor = vec3(0.5, 0.7, 1.0);
-    vec3 groundColor = vec3(0.65, 0.50, 0.38);
+    vec3 skyColor = pow(vec3(0.5, 0.7, 1.0), vec3(2.2));
+    vec3 groundColor = pow(vec3(0.65, 0.50, 0.38), vec3(2.2));
 
     float hemiMix = remap(normals.y, -1, 1, 0, 1);
     vec3 hemi = mix(groundColor, skyColor, hemiMix);
     vec3 hemiWColor = hemi * uColor;
 
     vec3 diffuseColor = color * st;
-    vec3 result = diffuseColor + hemiWColor;
+    vec3 result = pow(diffuseColor + hemiWColor, vec3(1.0 / 2.2));
     finalColor = vec4(result, 1.0);
 }
