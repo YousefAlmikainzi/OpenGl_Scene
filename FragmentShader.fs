@@ -28,7 +28,7 @@ void main()
     float diffFactor = dot(normals, dir);
     float st = saturation(diffFactor);
     //color
-    vec3 color = uColor;
+    vec3 color = pow(uColor, vec3(2.2));
     //ambient
     //vec3 ambient = color * 0.25;
     //hemi
@@ -37,7 +37,7 @@ void main()
 
     float hemiMix = remap(normals.y, -1, 1, 0, 1);
     vec3 hemi = mix(groundColor, skyColor, hemiMix);
-    vec3 hemiWColor = hemi * uColor;
+    vec3 hemiWColor = hemi * color;
 
     vec3 diffuseColor = color * st;
     vec3 result = pow(diffuseColor + hemiWColor, vec3(1.0 / 2.2));
