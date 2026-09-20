@@ -493,3 +493,19 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     mat4 translation = M_Translate(-position.x, -position.y, -position.z);
     return M_MulMatrix(c, translation);
 }
+
+float Create_Sphere()
+{
+    float b;
+    float x;
+    float z;
+    float angle = 2.0f * 3.14159265f;
+    int n = 4;
+    for(int i = 0; i <= n - 1; i++)
+    {
+        b = (float)(i * (angle / n));
+        x = sin(b);
+        z = cos(b);
+    }
+    return b;
+}
