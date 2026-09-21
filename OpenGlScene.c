@@ -160,6 +160,7 @@ mat4 M_Rotate_X(float angle);
 mat4 M_Rotate_Y(float angle);
 mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ);
 mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp);
+float *Create_Sphere();
 
 int main()
 {
@@ -496,20 +497,28 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
 
 float *Create_Sphere()
 {
-    float *sphere = malloc(sizeof(float) * 12);
     float b;
     float x;
+    float y;
     float z;
+    float a;
     float angle = 2.0f * 3.14159265f;
     int n = 4;
-    for(int i = 0; i <= n - 1; i++)
+    int m = 5;
+    float *sphere = malloc(sizeof(float) * (n * 3));
+    for(int j = 0; j <= m - 1; j++)
     {
-        b = (float)(i * (angle / n));
-        x = sin(b);
-        z = cos(b);
-        sphere[i * 3 + 0] = x;
-        sphere[i * 3 + 1] = 0;
-        sphere[i * 3 + 2] = z;
+        a = (-3.14159265f / 2.0f) + j * (3.14159265f / (m-1));
+        for(int i = 0; i <= n - 1; i++)
+        {
+            b = (float)(i * (angle / n));
+            x = cos(a) * sin(b);
+            y = sin(a);
+            z = cos(a) * cos(b);
+            sphere[i * 3 + 0] = x;
+            sphere[i * 3 + 1] = y;
+            sphere[i * 3 + 2] = z;
+        }
     }
     return sphere;
 }
