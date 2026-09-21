@@ -505,19 +505,20 @@ float *Create_Sphere()
     float angle = 2.0f * 3.14159265f;
     int n = 4;
     int m = 5;
-    float *sphere = malloc(sizeof(float) * (n * 3));
+    float *sphere = malloc(sizeof(float) * (m * n * 3));
     for(int j = 0; j <= m - 1; j++)
     {
         a = (-3.14159265f / 2.0f) + j * (3.14159265f / (m-1));
         for(int i = 0; i <= n - 1; i++)
         {
+            int point = j * n + i;
             b = (float)(i * (angle / n));
             x = cos(a) * sin(b);
             y = sin(a);
             z = cos(a) * cos(b);
-            sphere[i * 3 + 0] = x;
-            sphere[i * 3 + 1] = y;
-            sphere[i * 3 + 2] = z;
+            sphere[point * 3 + 0] = x;
+            sphere[point * 3 + 1] = y;
+            sphere[point * 3 + 2] = z;
         }
     }
     return sphere;
