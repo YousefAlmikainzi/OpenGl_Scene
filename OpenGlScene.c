@@ -494,8 +494,9 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     return M_MulMatrix(c, translation);
 }
 
-float Create_Sphere()
+float *Create_Sphere()
 {
+    float *sphere = malloc(sizeof(float) * 12);
     float b;
     float x;
     float z;
@@ -506,6 +507,9 @@ float Create_Sphere()
         b = (float)(i * (angle / n));
         x = sin(b);
         z = cos(b);
+        sphere[i * 3 + 0] = x;
+        sphere[i * 3 + 1] = 0;
+        sphere[i * 3 + 2] = z;
     }
-    return b;
+    return sphere;
 }
