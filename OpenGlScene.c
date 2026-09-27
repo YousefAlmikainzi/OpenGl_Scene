@@ -137,18 +137,6 @@ float uv[]=
     1.0f, 1.0f
 };
 
-unsigned int indices_sphere[]=
-{
-    0,1,5,
-    5,4,0,
-    1,2,6,
-    6,5,1,
-    2,3,7,
-    7,6,2,
-    3,0,4,
-    4,7,3
-};
-
 typedef struct
 {
     float x, y, z;
@@ -171,7 +159,8 @@ mat4 M_Rotate_X(float angle);
 mat4 M_Rotate_Y(float angle);
 mat4 M_Perspective(float fovyRadians, float aspect, float nearZ, float farZ);
 mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp);
-float *Create_Sphere();
+float *Create_Sphere(int n, int m);
+unsigned int *Create_Sphere_Indices(int n, int m);
 
 int main()
 {
@@ -506,7 +495,7 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     return M_MulMatrix(c, translation);
 }
 
-float *Create_Sphere()
+float *Create_Sphere(int n, int m)
 {
     float b;
     float x;
@@ -514,9 +503,8 @@ float *Create_Sphere()
     float z;
     float a;
     float angle = 2.0f * 3.14159265f;
-    int n = 4;
-    int m = 5;
-    float *sphere = malloc(sizeof(float) * (m * n * 3));
+    int quadIndex = 3;
+    float *sphere = malloc(sizeof(float) * (m * n * quadIndex));
     for(int j = 0; j <= m - 1; j++)
     {
         a = (-3.14159265f / 2.0f) + j * (3.14159265f / (m-1));
@@ -527,10 +515,39 @@ float *Create_Sphere()
             x = cos(a) * sin(b);
             y = sin(a);
             z = cos(a) * cos(b);
-            sphere[point * 3 + 0] = x;
-            sphere[point * 3 + 1] = y;
-            sphere[point * 3 + 2] = z;
+            sphere[point * quadIndex + 0] = x;
+            sphere[point * quadIndex + 1] = y;
+            sphere[point * quadIndex + 2] = z;
         }
     }
     return sphere;
+}
+
+unsigned int *Create_Sphere_Indices(int n, int m)
+{
+    int bl;
+    int br;
+    int tl;
+    int tr;
+    int triangleIndex = 6;
+    unsigned int *indices = malloc(sizeof(unsigned int) * (m-1) * n * 6);
+    for(int j = 0; j < m - 1; j++)
+    {
+        for(int i = 0; i < n; i++)
+        {
+            int point = j * n + i;
+            bl =  j * n + i;
+            br = j * n + ((i+1)%n);
+            tl = (j+1) * n + (i);
+            tr = (j + 1) * n + (i + 1) %n;
+            indices[point * triangleIndex + 0] = bl;
+            indices[point * triangleIndex + 1] = br;
+            indices[point * triangleIndex + 2] = tr;
+            
+            indices[point * triangleIndex + 3] = tr;
+            indices[point * triangleIndex + 4] = tl;
+            indices[point * triangleIndex + 5] = bl;
+        }
+    }
+    return indices;
 }
