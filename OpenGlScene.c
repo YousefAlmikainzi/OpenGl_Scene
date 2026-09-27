@@ -207,7 +207,7 @@ int main()
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
 
-    unsigned int VAO, VBO, NRS, EBO, CLR, UV;
+    unsigned int VAO, VBO, NRS, EBO, CLR, UV, VAO_SP, VBO_SP, EBO_SP;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -248,6 +248,33 @@ int main()
     glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
+    //sphere
+    int sectors = 4;
+    int rings = 5;
+    float *sphere = Create_Sphere(sectors, rings);
+    unsigned int *sphereIndices = Create_Sphere_Indices(sectors, rings);
+    
+    glGenVertexArrays(1, &VAO_SP);
+    glBindVertexArray(VAO_SP);
+    
+    glGenBuffers(1, &VBO_SP);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_SP);
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sectors * rings * 3, sphere, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    //unbind
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
+    //ebo
+    glGenBuffers(1, &EBO);
+    glBindVertexArray(VAO_SP);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     glBindVertexArray(0);
 
     int modelLoc = glGetUniformLocation(shaderProgram, "model");
