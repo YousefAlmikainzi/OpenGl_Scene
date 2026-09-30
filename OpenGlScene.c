@@ -251,8 +251,8 @@ int main()
     glBindVertexArray(0);
     
     //sphere
-    int sectors = 4;
-    int rings = 5;
+    int sectors = 32;
+    int rings = 16;
     
     float *sphere = Create_Sphere(sectors, rings);
     unsigned int *sphereIndices = Create_Sphere_Indices(sectors, rings);
@@ -272,6 +272,7 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_SP);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * sectors * (rings - 1) * 6, sphereIndices, GL_STATIC_DRAW);
     glBindVertexArray(0);
+
 
     int modelLoc = glGetUniformLocation(shaderProgram, "model");
     int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -330,6 +331,16 @@ int main()
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &cube3.m[0]);
         glUniform3f(colorLoc, 1.f, 1.f, 1.0f);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        //sphere model
+        mat4 sphereModel = M_Translate(-1.0f, 1.0f, 0.0f);
+        sphereModel = M_MulMatrix(sphereModel, M_Rotate_Z(angleTime / -2.0f));
+        sphereModel = M_MulMatrix(sphereModel, M_Rotate_X(angleTime / -2.0f));
+        sphereModel = M_MulMatrix(sphereModel, M_Scale(0.25f, 0.25f, 0.25f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &sphereModel.m[0]);
+        glUniform3f(colorLoc, 1.f, 1.f, 1.0f);
+        glBindVertexArray(VAO_SP);
+        glDrawElements(GL_TRIANGLES, sectors * (rings - 1) * 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
