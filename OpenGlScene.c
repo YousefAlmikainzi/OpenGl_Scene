@@ -207,7 +207,8 @@ int main()
     glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
 
-    unsigned int VAO, VBO, NRS, EBO, CLR, UV, VAO_SP, VBO_SP, EBO_SP;
+    unsigned int VAO, VBO, NRS, EBO, CLR, UV, 
+    VAO_SP, VBO_SP, EBO_SP;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -253,35 +254,34 @@ int main()
     //sphere
     int sectors = 32;
     int rings = 16;
-    
     float *sphere = Create_Sphere(sectors, rings);
     unsigned int *sphereIndices = Create_Sphere_Indices(sectors, rings);
     
     glGenVertexArrays(1, &VAO_SP);
     glBindVertexArray(VAO_SP);
-    
     glGenBuffers(1, &VBO_SP);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_SP);
-    
     glBufferData(GL_ARRAY_BUFFER,sizeof(float) * sectors * rings * 3,sphere,GL_STATIC_DRAW);
-    
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3 * sizeof(float),(void*)0);
     glEnableVertexAttribArray(0);
-    
+    //sphere EBO
     glGenBuffers(1, &EBO_SP);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_SP);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * sectors * (rings - 1) * 6, sphereIndices, GL_STATIC_DRAW);
+    //sphere normals
+    glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,3 * sizeof(float),(void*)0);
+    glEnableVertexAttribArray(2);
     glBindVertexArray(0);
 
-
+    
     int modelLoc = glGetUniformLocation(shaderProgram, "model");
     int viewLoc = glGetUniformLocation(shaderProgram, "view");
     int projLoc = glGetUniformLocation(shaderProgram, "projection");
 
     int colorLoc = glGetUniformLocation(shaderProgram, "uColor");
-
-    Vec3 cameraPos = {-3.0f, -2.0f, 5.0f};
-    Vec3 cameraTarget = {-2.1f, 2.1f, -2.1f};
+    
+    Vec3 cameraPos    = {0.0f, 0.0f, 3.0f};
+    Vec3 cameraTarget = {0.0f, 1.0f, 0.0f};
     Vec3 worldUp = {0.0f, 1.0f, 0.0f};
 
     while(!glfwWindowShouldClose(window))
@@ -298,7 +298,6 @@ int main()
         cube = M_MulMatrix(cube, M_Scale(0.5f, 0.6f, 1.0f));
 
         mat4 view = M_LookAt(cameraPos, cameraTarget, worldUp);
-        view = M_MulMatrix(view, M_Rotate_Y(45.0f));
 
         float fov = 45.0f * (3.14159265f / 180.0f);
         float aspect = (float)RESOLUTION_X/RESOLUTION_Y;
