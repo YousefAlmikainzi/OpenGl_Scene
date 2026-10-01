@@ -279,6 +279,7 @@ int main()
     int projLoc = glGetUniformLocation(shaderProgram, "projection");
 
     int colorLoc = glGetUniformLocation(shaderProgram, "uColor");
+    int cameraLoc = glGetUniformLocation(shaderProgram, "cameraPos");
     
     Vec3 cameraPos    = {0.0f, 0.0f, 3.0f};
     Vec3 cameraTarget = {0.0f, 1.0f, 0.0f};
@@ -337,7 +338,8 @@ int main()
         sphereModel = M_MulMatrix(sphereModel, M_Rotate_X(angleTime / -2.0f));
         sphereModel = M_MulMatrix(sphereModel, M_Scale(0.25f, 0.25f, 0.25f));
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &sphereModel.m[0]);
-        glUniform3f(colorLoc, 1.f, 1.f, 1.0f);
+        glUniform3f(cameraLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+        glUniform3f(colorLoc, 0.f, 1.f, 1.0f);
         glBindVertexArray(VAO_SP);
         glDrawElements(GL_TRIANGLES, sectors * (rings - 1) * 6, GL_UNSIGNED_INT, 0);
 
@@ -501,7 +503,7 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
 
     //right
     Vec3 defualtUp = {0, 1, 0};
-    Vec3 right = get_crossProduct(forward, defualtUp);
+    Vec3 right = get_crossProduct(defualtUp, forward);
     float rightRoot = sqrt(right.x * right.x + right.y * right.y + right.z * right.z);
 
     right.x = right.x / rightRoot;
@@ -513,7 +515,7 @@ mat4 M_LookAt(Vec3 position, Vec3 target, Vec3 worldUp)
     c.m[8] = right.z;
 
     //up
-    Vec3 up = get_crossProduct(right, forward);
+    Vec3 up = get_crossProduct(forward, right);
     float upRoot = sqrt(up.x * up.x + up.y * up.y + up.z * up.z);
     up.x = up.x /upRoot;
     up.y = up.y /upRoot;

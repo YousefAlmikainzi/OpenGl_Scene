@@ -50,6 +50,5 @@ void main()
     //final
     vec3 diffuseColor = color * st + specular;
     vec3 result = pow(diffuseColor + hemiWColor, vec3(1.0 / 2.2));
-    result = result;
     finalColor = vec4(result, 1.0);
 }
